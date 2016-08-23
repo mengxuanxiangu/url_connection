@@ -14,5 +14,5 @@ message TrackPoint{
 }
 message RoadProbe{
     required string uid = 1;
-    required TrackPoint tracks = 2;
+    repeated TrackPoint tracks = 2;
 }

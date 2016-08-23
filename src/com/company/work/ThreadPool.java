@@ -10,14 +10,38 @@ public class ThreadPool {
     private BlockingQueue<byte[]> data_pool;
     private boolean run = false;
     private int thread_num = 1000;
+    private int sleep_time = 1000;
+    private WorkThread []thread_array;
+    private RequestThread request_thread;
 
-    public void run() {
+    public void start() {
         this.run = true;
+        init();
     }
 
-    public ThreadPool(int num) {
+    public boolean init() {
+        thread_array = new WorkThread [thread_num];
+        for (int i = 0; i < thread_num; i++) {
+            thread_array[i] = new WorkThread(this);
+            thread_array[i].start();
+        }
+        request_thread.start();
+        return true;
+    }
+
+    public void stop() {
+        this.run = false;
+    }
+
+    public boolean get_status() {
+        return this.run;
+    }
+
+    public ThreadPool(int num, int sleep_time) {
         this.thread_num = num;
+        this.sleep_time = sleep_time;
         data_pool = new LinkedBlockingQueue<byte[]>(this.thread_num);
+        request_thread = new RequestThread(sleep_time, this);
     }
 
     public boolean get_data(byte[] data) {
